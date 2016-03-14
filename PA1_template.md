@@ -1,12 +1,15 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r setup}
+
+```r
 library(knitr)
+```
+
+```
+## Warning: package 'knitr' was built under R version 3.2.4
+```
+
+```r
 library(ggplot2)
 # knit assumes the path of *.Rmd file as working directory. 
 # Hence setting the root.dir to getwd() of R
@@ -16,7 +19,8 @@ opts_knit$set(root.dir=normalizePath('../'))
 
 
 ### Loading and preprocessing the data
-```{r,echo=TRUE}
+
+```r
 # Check if data exists, if not create it. 
 if(!file.exists("data")) {
     dir.create("./data")
@@ -33,7 +37,8 @@ valid.activity <- activity[complete.cases(activity),]
 ```
 
 ### What is mean total number of steps taken per day?
-```{r histogram_total_num_steps, echo=TRUE}
+
+```r
 # calculate the total number of steps taken per day
 steps.per.day <- aggregate(steps ~ date, data=valid.activity, sum)
 
@@ -42,20 +47,33 @@ hist(steps.per.day$steps,main="Histogram of total number of steps
      taken per day", xlab="Steps per day")
 ```
 
-```{r, echo=TRUE}
+![](PA1_template_files/figure-html/histogram_total_num_steps-1.png)
+
+
+```r
 # Calculate the mean of the total number of steps taken per day
 print(paste("Mean of total number of steps taken per day", 
             round(mean(steps.per.day$steps),2)))
 ```
 
-```{r, echo=TRUE}
+```
+## [1] "Mean of total number of steps taken per day 10766.19"
+```
+
+
+```r
 # Calculate the median of the total number of steps taken per day
 print(paste("Median of total number of steps taken per day", 
             round(median(steps.per.day$steps),2)))
 ```
 
+```
+## [1] "Median of total number of steps taken per day 10765"
+```
+
 ### What is the average daily activity pattern?
-```{r Plot_interval_avg_steps, echo=TRUE}
+
+```r
 # Calculate the average steps taken per interval for all days
 avg.steps.per.interval <- aggregate(steps ~ interval, 
                                     data=valid.activity, mean)
@@ -67,7 +85,10 @@ plot(avg.steps.per.interval$interval,avg.steps.per.interval$steps,type="l",
      main = "Average number of steps taken per interval")
 ```
 
-```{r, echo=TRUE}
+![](PA1_template_files/figure-html/Plot_interval_avg_steps-1.png)
+
+
+```r
 # Create a logical vector to identify the interval which 
 # has the maximum steps
 idx.max.steps <- avg.steps.per.interval$steps == 
@@ -80,23 +101,31 @@ max.avg.steps.per.interval <- avg.steps.per.interval[idx.max.steps,]
 print(paste("5-minute Interval which has the maximum steps is", 
             max.avg.steps.per.interval$interval, " and maximum steps is ",
             round(max.avg.steps.per.interval$steps,2)))
+```
 
+```
+## [1] "5-minute Interval which has the maximum steps is 835  and maximum steps is  206.17"
 ```
 
 ### Imputing missing values
 #### Adopted a strategy to replace NA values with average steps 
 #### in 5-minute interval
-```{r, echo=TRUE}
+
+```r
 # Identify the NA records
 missing.activity <- activity[!complete.cases(activity),]
 
 # Display the total number NA rows.
 print(paste("Number of rows with NAs ", 
             nrow(missing.activity)))
+```
 
-````
+```
+## [1] "Number of rows with NAs  2304"
+```
 
-```{r histogram_total_num_steps_imputed, echo=TRUE}
+
+```r
 # calculate average steps per day - for my sake 
 avg.steps.per.day <- aggregate(steps ~ date, data=valid.activity, mean)
 
@@ -123,20 +152,34 @@ hist(steps.per.day.imputed$steps,main="Histogram of total number of
      steps taken per day (Imputed)", xlab="Steps per day")
 ```
 
-```{r, echo=TRUE}
+![](PA1_template_files/figure-html/histogram_total_num_steps_imputed-1.png)
+
+
+```r
 # Display the mean of the total steps taken per day
 print(paste("Mean of total number of steps taken per day using imputed values ",round(mean(steps.per.day.imputed$steps),2)))
+```
 
 ```
-```{r, echo=TRUE}
+## [1] "Mean of total number of steps taken per day using imputed values  10766.19"
+```
+
+```r
 # Display the median of the total number of steps taken per day
 print(paste("Median of total number of steps taken per day using imputed values ",round(median(steps.per.day.imputed$steps),2)))
+```
 
+```
+## [1] "Median of total number of steps taken per day using imputed values  10766.19"
+```
+
+```r
 # Mean stays the same.But Median has increased from 10765 to 10766.19 
 # because of imputed values. 
 ```
 ### Are there differences in activity patterns between weekdays and weekends?
-```{r plot_avg_steps_weekend_weekday, echo=TRUE}
+
+```r
 # Identify the records corresponding to weekends
 idx_weekends <- weekdays(as.Date(activity_new$date, '%Y-%m-%d')) %in% 
                 c("Saturday","Sunday")
@@ -166,6 +209,8 @@ ggplot(steps.per.day.imputed, aes(interval,steps)) +
         labs(x="Interval",y="Number of Steps",
              title="Number of Steps per interval by day type") + theme_gray()
 ```
+
+![](PA1_template_files/figure-html/plot_avg_steps_weekend_weekday-1.png)
 
 #### There are difference in activity patterns between weekdays and weekends. Seems
 #### more steps are taken during weekdays morning hours. And same way more steps 
